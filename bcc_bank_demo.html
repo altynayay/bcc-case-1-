@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCC Bank - Персонализированные рекомендации</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* BCC Bank Style */
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-content p {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Recommendations */
+        .recommendations-container {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .recommendations-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .recommendations-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .recommendation-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            border-color: var(--secondary-color);
+            box-shadow: var(--shadow);
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .client-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .client-details p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .product-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .benefit-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        .push-message {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        /* Demo Data */
+        .demo-notice {
+            background: linear-gradient(135deg, #fef3c7, #fbbf24);
+            border: 1px solid #f59e0b;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .demo-notice h3 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-notice p {
+            color: #92400e;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav {
+                gap: 1rem;
+            }
+            
+            .main {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>BCC Bank</span>
+                </div>
+                <nav class="nav">
+                    <a href="#dashboard" class="nav-link active">Дашборд</a>
+                    <a href="#clients" class="nav-link">Клиенты</a>
+                    <a href="#analytics" class="nav-link">Аналитика</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h1>Персонализированные рекомендации</h1>
+                    <p>Система анализа поведения клиентов и генерации персонализированных пуш-уведомлений</p>
+                </div>
+
+                <div class="demo-notice">
+                    <h3>🎯 Демо-версия BCC Bank</h3>
+                    <p>Это демонстрационная версия системы персонализированных рекомендаций. Данные загружены из CSV файлов.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>60</h3>
+                            <p>Всего клиентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>10</h3>
+                            <p>Финансовых продуктов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>4%</h3>
+                            <p>Максимальный кешбэк</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>60</h3>
+                            <p>Пуш-уведомлений готово</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="generateDemoRecommendations()">
+                        <i class="fas fa-magic"></i>
+                        Сгенерировать демо-рекомендации
+                    </button>
+                    <button class="btn btn-secondary" onclick="showProducts()">
+                        <i class="fas fa-list"></i>
+                        Показать продукты
+                    </button>
+                </div>
+
+                <div class="recommendations-container">
+                    <h2>Примеры рекомендаций</h2>
+                    <div id="recommendations-list" class="recommendations-list">
+                        <div class="recommendation-card">
+                            <div class="recommendation-header">
+                                <div class="client-info">
+                                    <div class="client-avatar">1</div>
+                                    <div class="client-details">
+                                        <h4>Айгерим</h4>
+                                        <p>Зарплатный клиент, 29 лет</p>
+                                    </div>
+                                </div>
+                                <div class="product-badge">Карта для путешествий</div>
+                            </div>
+                            
+                            <div class="benefit-amount">27 400 ₸</div>
+                            <p class="mb-2">Кешбэк 4% на путешествия и такси</p>
+                            
+                            <div class="push-message">
+                                <strong>Пуш-уведомление:</strong><br>
+                                "Айгерим, в последние месяцы вы много путешествуете и пользуетесь такси. С картой для путешествий вернули бы 1 096 ₸ кешбэка. Откройте карту."
+                            </div>
+                        </div>
+
+                        <div class="recommendation-card">
+                            <div class="recommendation-header">
+                                <div class="client-info">
+                                    <div class="client-avatar">2</div>
+                                    <div class="client-details">
+                                        <h4>Данияр</h4>
+                                        <p>Премиальный клиент, 41 год</p>
+                                    </div>
+                                </div>
+                                <div class="product-badge">Премиальная карта</div>
+                            </div>
+                            
+                            <div class="benefit-amount">45 200 ₸</div>
+                            <p class="mb-2">Кешбэк 4% на все покупки + люкс категории</p>
+                            
+                            <div class="push-message">
+                                <strong>Пуш-уведомление:</strong><br>
+                                "Данияр, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."
+                            </div>
+                        </div>
+
+                        <div class="recommendation-card">
+                            <div class="recommendation-header">
+                                <div class="client-info">
+                                    <div class="client-avatar">3</div>
+                                    <div class="client-details">
+                                        <h4>Сабина</h4>
+                                        <p>Студент, 22 года</p>
+                                    </div>
+                                </div>
+                                <div class="product-badge">Кредитная карта</div>
+                            </div>
+                            
+                            <div class="benefit-amount">8 500 ₸</div>
+                            <p class="mb-2">10% в любимых категориях + онлайн-сервисы</p>
+                            
+                            <div class="push-message">
+                                <strong>Пуш-уведомление:</strong><br>
+                                "Сабина, ваши топ-категории — Продукты питания, Кафе и рестораны, Смотрим дома. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Clients Section -->
+            <section id="clients" class="section">
+                <div class="section-header">
+                    <h1>База клиентов</h1>
+                    <p>Просмотр и анализ клиентской базы</p>
+                </div>
+
+                <div class="demo-notice">
+                    <h3>📊 Анализ 60 клиентов</h3>
+                    <p>Данные загружены из CSV файлов: профили клиентов, транзакции за 3 месяца, история переводов</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>8</h3>
+                            <p>Студентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>32</h3>
+                            <p>Зарплатных клиентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>15</h3>
+                            <p>Премиальных клиентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>5</h3>
+                            <p>Стандартных клиентов</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="section">
+                <div class="section-header">
+                    <h1>Аналитика</h1>
+                    <p>Детальный анализ поведения клиентов</p>
+                </div>
+
+                <div class="demo-notice">
+                    <h3>📈 Анализ данных</h3>
+                    <p>Система анализирует транзакции по 25+ категориям и 20+ типам переводов для каждого клиента</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>25+</h3>
+                            <p>Категорий трат</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>20+</h3>
+                            <p>Типов переводов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>3</h3>
+                            <p>Месяца данных</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>10</h3>
+                            <p>Финансовых продуктов</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = e.target.getAttribute('href').substring(1);
+                showSection(section);
+            });
+        });
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionName}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function generateDemoRecommendations() {
+            alert('🎯 Демо-рекомендации уже загружены!\n\nВ полной версии система:\n• Анализирует данные 60 клиентов\n• Рассчитывает выгоду для 10 продуктов\n• Генерирует персонализированные пуш-уведомления\n• Экспортирует результаты в CSV');
+        }
+
+        function showProducts() {
+            const products = [
+                '1. Карта для путешествий - кешбэк 4% на путешествия/такси',
+                '2. Премиальная карта - кешбэк 2-4% + люкс категории',
+                '3. Кредитная карта - 10% в любимых категориях',
+                '4. Обмен валют - экономия на спреде',
+                '5. Кредит наличными - быстрый доступ к финансам',
+                '6. Депозит мультивалютный - доход + удобство',
+                '7. Депозит сберегательный - максимальная ставка',
+                '8. Депозит накопительный - повышенная ставка',
+                '9. Инвестиции - нулевые комиссии',
+                '10. Золотые слитки - защитный актив'
+            ];
+            
+            alert('💳 Анализируемые продукты:\n\n' + products.join('\n'));
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'KZT',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+    </script>
+</body>
+</html>

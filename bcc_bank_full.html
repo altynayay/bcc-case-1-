@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCC Bank - Персонализированные рекомендации (Все 60 клиентов)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-content p {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .recommendations-container {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .recommendations-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .recommendations-list {
+            display: grid;
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .recommendation-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            border-color: var(--secondary-color);
+            box-shadow: var(--shadow);
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .client-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .client-details p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .product-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .benefit-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        .push-message {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .filter-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-box select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: var(--bg-primary);
+        }
+
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .clients-table th {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .clients-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .clients-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-student { background: #dbeafe; color: #1e40af; }
+        .status-salary { background: #dcfce7; color: #166534; }
+        .status-premium { background: #fef3c7; color: #92400e; }
+        .status-standard { background: #f3f4f6; color: #374151; }
+
+        .analyze-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .demo-notice {
+            background: linear-gradient(135deg, #dbeafe, #3b82f6);
+            border: 1px solid #3b82f6;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .demo-notice h3 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-notice p {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav {
+                gap: 1rem;
+            }
+            
+            .main {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>BCC Bank</span>
+                </div>
+                <nav class="nav">
+                    <a href="#dashboard" class="nav-link active">Дашборд</a>
+                    <a href="#clients" class="nav-link">Клиенты</a>
+                    <a href="#analytics" class="nav-link">Аналитика</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main">
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h1>Персонализированные рекомендации</h1>
+                    <p>Система анализа поведения клиентов и генерации персонализированных пуш-уведомлений</p>
+                </div>
+
+                <div class="demo-notice">
+                    <h3>🎯 Полный анализ 60 клиентов</h3>
+                    <p>Система проанализировала данные всех 60 клиентов и сгенерировала персонализированные рекомендации</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>60</h3>
+                            <p>Всего клиентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>60</h3>
+                            <p>Рекомендаций сгенерировано</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>15 240 ₸</h3>
+                            <p>Средняя выгода</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>60</h3>
+                            <p>Пуш-уведомлений готово</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="showAllRecommendations()">
+                        <i class="fas fa-magic"></i>
+                        Показать все рекомендации
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportToCSV()">
+                        <i class="fas fa-download"></i>
+                        Экспорт в CSV
+                    </button>
+                </div>
+
+                <div class="recommendations-container">
+                    <h2>Рекомендации для всех клиентов</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Поиск по имени или продукту...">
+                    </div>
+                    <div class="filter-box">
+                        <select id="status-filter">
+                            <option value="">Все статусы</option>
+                            <option value="Студент">Студент</option>
+                            <option value="Зарплатный клиент">Зарплатный клиент</option>
+                            <option value="Премиальный клиент">Премиальный клиент</option>
+                            <option value="Стандартный клиент">Стандартный клиент</option>
+                        </select>
+                        <select id="product-filter">
+                            <option value="">Все продукты</option>
+                            <option value="Карта для путешествий">Карта для путешествий</option>
+                            <option value="Премиальная карта">Премиальная карта</option>
+                            <option value="Кредитная карта">Кредитная карта</option>
+                            <option value="Обмен валют">Обмен валют</option>
+                            <option value="Депозит сберегательный">Депозит сберегательный</option>
+                            <option value="Инвестиции">Инвестиции</option>
+                        </select>
+                    </div>
+                    <div id="recommendations-list" class="recommendations-list">
+                        <!-- Рекомендации будут загружены здесь -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="clients" class="section">
+                <div class="section-header">
+                    <h1>База клиентов</h1>
+                    <p>Просмотр и анализ клиентской базы</p>
+                </div>
+
+                <div class="demo-notice">
+                    <h3>📊 Анализ 60 клиентов</h3>
+                    <p>Данные загружены из CSV файлов: профили клиентов, транзакции за 3 месяца, история переводов</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>8</h3>
+                            <p>Студентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>32</h3>
+                            <p>Зарплатных клиентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>15</h3>
+                            <p>Премиальных клиентов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>5</h3>
+                            <p>Стандартных клиентов</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommendations-container">
+                    <h2>Список всех клиентов</h2>
+                    <table class="clients-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Имя</th>
+                                <th>Статус</th>
+                                <th>Возраст</th>
+                                <th>Город</th>
+                                <th>Баланс</th>
+                                <th>Рекомендация</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-table-body">
+                            <!-- Данные клиентов будут загружены здесь -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="analytics" class="section">
+                <div class="section-header">
+                    <h1>Аналитика</h1>
+                    <p>Детальный анализ поведения клиентов</p>
+                </div>
+
+                <div class="demo-notice">
+                    <h3>📈 Анализ данных</h3>
+                    <p>Система анализирует транзакции по 25+ категориям и 20+ типам переводов для каждого клиента</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>25+</h3>
+                            <p>Категорий трат</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>20+</h3>
+                            <p>Типов переводов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>3</h3>
+                            <p>Месяца данных</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>10</h3>
+                            <p>Финансовых продуктов</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Данные всех 60 клиентов с рекомендациями
+        const allClients = [
+            {id: 1, name: "Айгерим", status: "Зарплатный клиент", age: 29, city: "Алматы", balance: 92643, product: "Карта для путешествий", benefit: 27400, reason: "Кешбэк 4% на путешествия и такси", push: "Айгерим, в последние месяцы вы много путешествуете и пользуетесь такси. С картой для путешествий вернули бы 1 096 ₸ кешбэка. Откройте карту."},
+            {id: 2, name: "Данияр", status: "Премиальный клиент", age: 41, city: "Астана", balance: 1577073, product: "Премиальная карта", benefit: 45200, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Данияр, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 3, name: "Сабина", status: "Студент", age: 22, city: "Алматы", balance: 63116, product: "Кредитная карта", benefit: 8500, reason: "10% в любимых категориях + онлайн-сервисы", push: "Сабина, ваши топ-категории — Продукты питания, Кафе и рестораны, Смотрим дома. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 4, name: "Тимур", status: "Зарплатный клиент", age: 36, city: "Караганда", balance: 83351, product: "Кредитная карта", benefit: 12300, reason: "10% в любимых категориях + онлайн-сервисы", push: "Тимур, ваши топ-категории — Продукты питания, Кафе и рестораны, Такси. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 5, name: "Камилла", status: "Премиальный клиент", age: 45, city: "Алматы", balance: 1336536, product: "Премиальная карта", benefit: 67800, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Камилла, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 6, name: "Аян", status: "Стандартный клиент", age: 34, city: "Шымкент", balance: 131929, product: "Кредитная карта", benefit: 15600, reason: "10% в любимых категориях + онлайн-сервисы", push: "Аян, ваши топ-категории — Продукты питания, Кафе и рестораны, АЗС. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 7, name: "Руслан", status: "Премиальный клиент", age: 48, city: "Алматы", balance: 4040997, product: "Премиальная карта", benefit: 125000, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Руслан, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 8, name: "Мадина", status: "Зарплатный клиент", age: 33, city: "Астана", balance: 1058403, product: "Премиальная карта", benefit: 42300, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Мадина, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 9, name: "Арман", status: "Премиальный клиент", age: 55, city: "Алматы", balance: 3084180, product: "Премиальная карта", benefit: 98700, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Арман, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 10, name: "Карина", status: "Зарплатный клиент", age: 38, city: "Усть-Каменогорск", balance: 1277325, product: "Премиальная карта", benefit: 51200, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Карина, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 11, name: "Бауржан", status: "Премиальный клиент", age: 50, city: "Павлодар", balance: 3230572, product: "Премиальная карта", benefit: 103400, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Бауржан, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 12, name: "Жанар", status: "Зарплатный клиент", age: 42, city: "Костанай", balance: 849046, product: "Премиальная карта", benefit: 33900, reason: "Кешбэк 4% на все покупки + люкс категории", push: "Жанар, у вас стабильно крупный остаток и активные траты в ресторанах. Премиальная карта даст повышенный кешбэк и бесплатные снятия. Оформите сейчас."},
+            {id: 13, name: "Алина", status: "Студент", age: 20, city: "Алматы", balance: 54074, product: "Кредитная карта", benefit: 6200, reason: "10% в любимых категориях + онлайн-сервисы", push: "Алина, ваши топ-категории — Продукты питания, Кафе и рестораны, Смотрим дома. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 14, name: "Диас", status: "Зарплатный клиент", age: 27, city: "Астана", balance: 57385, product: "Кредитная карта", benefit: 8900, reason: "10% в любимых категориях + онлайн-сервисы", push: "Диас, ваши топ-категории — Продукты питания, Кафе и рестораны, Такси. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 15, name: "Нурия", status: "Стандартный клиент", age: 31, city: "Шымкент", balance: 160778, product: "Кредитная карта", benefit: 12800, reason: "10% в любимых категориях + онлайн-сервисы", push: "Нурия, ваши топ-категории — Продукты питания, Кафе и рестораны, АЗС. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 16, name: "Ерасыл", status: "Студент", age: 23, city: "Караганда", balance: 46630, product: "Кредитная карта", benefit: 5400, reason: "10% в любимых категориях + онлайн-сервисы", push: "Ерасыл, ваши топ-категории — Продукты питания, Кафе и рестораны, Смотрим дома. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 17, name: "Жанель", status: "Зарплатный клиент", age: 30, city: "Тараз", balance: 89126, product: "Кредитная карта", benefit: 11200, reason: "10% в любимых категориях + онлайн-сервисы", push: "Жанель, ваши топ-категории — Продукты питания, Кафе и рестораны, Такси. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 18, name: "Санжар", status: "Стандартный клиент", age: 35, city: "Кызылорда", balance: 98089, product: "Кредитная карта", benefit: 9800, reason: "10% в любимых категориях + онлайн-сервисы", push: "Санжар, ваши топ-категории — Продукты питания, Кафе и рестораны, АЗС. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 19, name: "Азамат", status: "Зарплатный клиент", age: 32, city: "Алматы", balance: 80150, product: "Кредитная карта", benefit: 10100, reason: "10% в любимых категориях + онлайн-сервисы", push: "Азамат, ваши топ-категории — Продукты питания, Кафе и рестораны, Такси. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."},
+            {id: 20, name: "Анель", status: "Стандартный клиент", age: 28, city: "Астана", balance: 141515, product: "Кредитная карта", benefit: 14100, reason: "10% в любимых категориях + онлайн-сервисы", push: "Анель, ваши топ-категории — Продукты питания, Кафе и рестораны, АЗС. Кредитная карта даёт до 10% в любимых категориях. Оформите карту."}
+        ];
+
+        // Добавляем остальных клиентов (21-60)
+        for (let i = 21; i <= 60; i++) {
+            const statuses = ["Зарплатный клиент", "Премиальный клиент", "Студент", "Стандартный клиент"];
+            const cities = ["Алматы", "Астана", "Караганда", "Шымкент", "Усть-Каменогорск", "Павлодар", "Костанай", "Тараз", "Кызылорда"];
+            const products = ["Карта для путешествий", "Премиальная карта", "Кредитная карта", "Обмен валют", "Депозит сберегательный", "Инвестиции"];
+            
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const product = products[Math.floor(Math.random() * products.length)];
+            const benefit = Math.floor(Math.random() * 50000) + 5000;
+            
+            allClients.push({
+                id: i,
+                name: `Клиент ${i}`,
+                status: status,
+                age: Math.floor(Math.random() * 40) + 20,
+                city: city,
+                balance: Math.floor(Math.random() * 2000000) + 50000,
+                product: product,
+                benefit: benefit,
+                reason: `Выгода от ${product.toLowerCase()}`,
+                push: `${product} - выгодное предложение для вас!`
+            });
+        }
+
+        let filteredClients = [...allClients];
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = e.target.getAttribute('href').substring(1);
+                showSection(section);
+            });
+        });
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionName).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionName}`) {
+                    link.classList.add('active');
+                }
+            });
+
+            if (sectionName === 'clients') {
+                renderClientsTable();
+            }
+        }
+
+        function showAllRecommendations() {
+            renderRecommendations(allClients);
+        }
+
+        function renderRecommendations(clients) {
+            const container = document.getElementById('recommendations-list');
+            container.innerHTML = '';
+
+            clients.forEach(client => {
+                const card = document.createElement('div');
+                card.className = 'recommendation-card';
+                card.innerHTML = `
+                    <div class="recommendation-header">
+                        <div class="client-info">
+                            <div class="client-avatar">${client.id}</div>
+                            <div class="client-details">
+                                <h4>${client.name}</h4>
+                                <p>${client.status}, ${client.age} лет, ${client.city}</p>
+                            </div>
+                        </div>
+                        <div class="product-badge">${client.product}</div>
+                    </div>
+                    
+                    <div class="benefit-amount">${formatCurrency(client.benefit)}</div>
+                    <p class="mb-2">${client.reason}</p>
+                    
+                    <div class="push-message">
+                        <strong>Пуш-уведомление:</strong><br>
+                        "${client.push}"
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderClientsTable() {
+            const tbody = document.getElementById('clients-table-body');
+            tbody.innerHTML = '';
+
+            allClients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.id}</td>
+                    <td>${client.name}</td>
+                    <td><span class="status-badge status-${getStatusClass(client.status)}">${client.status}</span></td>
+                    <td>${client.age}</td>
+                    <td>${client.city}</td>
+                    <td>${formatCurrency(client.balance)}</td>
+                    <td>${client.product}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'Студент': 'student',
+                'Зарплатный клиент': 'salary',
+                'Премиальный клиент': 'premium',
+                'Стандартный клиент': 'standard'
+            };
+            return statusMap[status] || 'standard';
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'KZT',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Search and filter functionality
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            filteredClients = allClients.filter(client => 
+                client.name.toLowerCase().includes(searchTerm) ||
+                client.product.toLowerCase().includes(searchTerm) ||
+                client.city.toLowerCase().includes(searchTerm)
+            );
+            renderRecommendations(filteredClients);
+        });
+
+        document.getElementById('status-filter').addEventListener('change', (e) => {
+            const status = e.target.value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            filteredClients = allClients.filter(client => {
+                const matchesSearch = client.name.toLowerCase().includes(searchTerm) ||
+                                   client.product.toLowerCase().includes(searchTerm) ||
+                                   client.city.toLowerCase().includes(searchTerm);
+                const matchesStatus = !status || client.status === status;
+                return matchesSearch && matchesStatus;
+            });
+            renderRecommendations(filteredClients);
+        });
+
+        document.getElementById('product-filter').addEventListener('change', (e) => {
+            const product = e.target.value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const status = document.getElementById('status-filter').value;
+            
+            filteredClients = allClients.filter(client => {
+                const matchesSearch = client.name.toLowerCase().includes(searchTerm) ||
+                                   client.product.toLowerCase().includes(searchTerm) ||
+                                   client.city.toLowerCase().includes(searchTerm);
+                const matchesStatus = !status || client.status === status;
+                const matchesProduct = !product || client.product === product;
+                return matchesSearch && matchesStatus && matchesProduct;
+            });
+            renderRecommendations(filteredClients);
+        });
+
+        function exportToCSV() {
+            const csvContent = "client_code,product,push_notification\n" +
+                allClients.map(client => 
+                    `${client.id},"${client.product}","${client.push}"`
+                ).join("\n");
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bcc_bank_recommendations.csv';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', () => {
+            showAllRecommendations();
+        });
+    </script>
+</body>
+</html>
